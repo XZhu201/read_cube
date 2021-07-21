@@ -155,7 +155,7 @@ end
 norm =  sum(sum(sum( abs(psi_xyz).^2 ))) .* dx*dy*dz
 % norm =  sum(sum(sum( psi_xyz ))) .* dx*dy*dz/(0.53)^3 
 
-%%%%% plot and save %%%%%
+%% plot and save 
 figure; pcolor( x,y,psi_xyz( :,:,round(Nz/2)-10 ) ); 
 xlabel('x')
 ylabel('y')
