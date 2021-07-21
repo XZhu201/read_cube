@@ -28,54 +28,54 @@ while(true)
     if ~ischar(tline)   % at the end of the file
         break;
     end
-     
+    
     if nline>Nhead          % skip the headlines, and work on the data
-%         disp(tline)
+                disp(tline)
         
-        if length(tline)>14     % if the line has 6 numbers, not only 1 number
-            
-            if tline(81) ==  '-'
-                tline(81:84) = 'E-99';
-            end  % end of tline
-            
-            if tline(67) ==  '-'
-                tline(67:70) = 'E-99';
-            end  % end of tline
-            
-            if tline(53) ==  '-'
-                tline(53:56) = 'E-99';
-            end  % end of tline
-            
-            if tline(39) ==  '-'
-                tline(39:42) = 'E-99';
-            end  % end of tline
-            
-            if tline(25) ==  '-'
-                tline(25:28) = 'E-99';
-            end  % end of tline
+        if length(tline)<84     % if the line has 6 numbers, not only 1 number
+            tline = [tline,repmat(' ',1,84-length(tline))];
+        end
         
-        end %end of length(tline)>14
+        if tline(81) ==  '-'
+            tline(81:84) = 'E-99';
+        end  % end of tline
+        
+        if tline(67) ==  '-'
+            tline(67:70) = 'E-99';
+        end  % end of tline
+        
+        if tline(53) ==  '-'
+            tline(53:56) = 'E-99';
+        end  % end of tline
+        
+        if tline(39) ==  '-'
+            tline(39:42) = 'E-99';
+        end  % end of tline
+        
+        if tline(25) ==  '-'
+            tline(25:28) = 'E-99';
+        end  % end of tline
         
         if tline(11) ==  '-'
             tline(11:14) = 'E-99';
         end  % end of tline
         
-%         disp(tline);
+                disp(tline);
         
         
         % transfer the str to number
         new_data = str2num(tline);
         
         if length(new_data)<6
-%             new_data = [new_data, zeros(1,6-length(new_data))];
+            %             new_data = [new_data, zeros(1,6-length(new_data))];
             new_data = [new_data, nan(1,6-length(new_data))];
         end
         
         data = [data; new_data];
-%         disp(new_data)
+                disp(new_data)
         
     end % end of if nline>Nhead
-
+    
 end % end of while
 
 fclose(fid);
@@ -93,7 +93,7 @@ Nwords = length(templine);
 
 xmin = str2double(templine{Nwords-2}) ;   % use {} instead of () for cell !!
 ymin = str2double(templine{Nwords-1}) ;
-zmin = str2double(templine{Nwords})  ;   
+zmin = str2double(templine{Nwords})  ;
 
 % for Nx,dx
 templine = split(head(4));
@@ -116,9 +116,9 @@ dz = str2double(templine{Nwords}) ;
 disp('xmin,Nx,dx;ymin,Ny,dy;zmin,Nz,dz='),disp([xmin,Nx,dx;ymin,Ny,dy;zmin,Nz,dz])
 
 % generate the grid
-x = xmin : dx : xmin+(Nx-1)*dx ;                
-y = ymin : dy : ymin+(Ny-1)*dy ;                
-z = zmin : dz : zmin+(Nz-1)*dz ;                
+x = xmin : dx : xmin+(Nx-1)*dx ;
+y = ymin : dy : ymin+(Ny-1)*dy ;
+z = zmin : dz : zmin+(Nz-1)*dz ;
 
 
 
@@ -127,18 +127,18 @@ psi_xyz = zeros(Nx,Ny,Nz);
 m = 0;
 disp('to 3D ...');
 for i = 1:Nx
-    for j = 1:Ny        
+    for j = 1:Ny
         for k = 1:Nz
             %%%
-            m = m+1 ;       
+            m = m+1 ;
             
             rr = fix( (m-1)/6 )+1 ;
             ll = mod(m-1,6)+1 ;
             dd = data(rr,ll) ;
             
-            while ( isnan(dd) )       
+            while ( isnan(dd) )
                 m = m+1 ;   % 不必担心m超出数据个数，因为在最后一个循环首先读到的必然是最后一个有效数据，而不是NaN
-                            % 在实际使用中，发现还是需要通过判断跳过一些点
+                % 在实际使用中，发现还是需要通过判断跳过一些点
                 
                 rr = fix( (m-1)/6 )+1 ;
                 ll = mod(m-1,6)+1 ;
@@ -146,17 +146,17 @@ for i = 1:Nx
             end
             
             psi_xyz(i,j,k) = dd;
-
+            
             %%%
         end
     end
 end
 
 norm =  sum(sum(sum( abs(psi_xyz).^2 ))) .* dx*dy*dz
-% norm =  sum(sum(sum( psi_xyz ))) .* dx*dy*dz/(0.53)^3 
+% norm =  sum(sum(sum( psi_xyz ))) .* dx*dy*dz/(0.53)^3
 
-%% plot and save 
-figure; pcolor( x,y,psi_xyz( :,:,round(Nz/2)-10 ) ); 
+%% plot and save
+figure; pcolor( x,y,psi_xyz( :,:,round(Nz/2)-10 ) );
 xlabel('x')
 ylabel('y')
 shading interp;
